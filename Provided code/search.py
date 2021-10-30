@@ -104,21 +104,17 @@ def DFS(closed, node, path, problem):
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    closed = util.Queue()
-    queue = util.Stack()
-    path = util.Stack()
-    queue.push(problem.getStartState())
+    closed = util.Stack()
+    fringe = util.Queue()
+    fringe.push((problem.getStartState(), []))
     while True:
-        node = queue.pop()
+        node, path = fringe.pop()
         closed.push(node)
         if problem.isGoalState(node):
-            break
+            return path
         for child in problem.getSuccessors(node):
             if child[0] not in closed.list:
-                path.push(child[1])
-                queue.push(child[0])
-
-    return path.list
+                fringe.push((child[0], path + [child[1]]))
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
