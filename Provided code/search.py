@@ -102,13 +102,28 @@ def DFS(closed, node, path, problem):
                 path.pop()
     return False
 
-
-
-
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
+    closed = util.Queue()
+    queue = util.Stack()
+    path = util.Stack()
+    BFS(closed, problem.getStartState(), queue, path, problem)
+    print(len(path.list))
+    return path.list
 
-    util.raiseNotDefined()
+def BFS(closed, node, queue, path, problem):
+    closed.push(node)
+    if problem.isGoalState(node):
+        return True
+    for child in problem.getSuccessors(node):
+        if child[0] not in closed.list:
+            path.push(child[1])
+            res = BFS(closed, child[0], queue, path, problem)
+            if res:
+                return True
+            else:
+                path.pop()
+    return False
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
