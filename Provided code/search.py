@@ -83,23 +83,27 @@ def depthFirstSearch(problem):
     understand the search problem that is being passed in:
     """
     closed = util.Stack()
-    fringe = util.Stack()
     path = util.Stack()
-    fringe.push((problem.getStartState()))
-    return DFS(closed, fringe, path, problem)
+    DFS(closed, problem.getStartState(), path, problem)
+    print(len(path.list))
+    return path.list
 
-def DFS(closed, fringe, path, problem):
-    if fringe.isEmpty():
-        return 1
-    node = fringe.pop()
+def DFS(closed, node, path, problem):
     closed.push(node)
     if problem.isGoalState(node):
-        return path
+        return True
     for child in problem.getSuccessors(node):
         if child[0] not in closed.list:
-            fringe.push(child[0])
             path.push(child[1])
-            DFS(closed, fringe, path, problem)
+            res = DFS(closed, child[0], path, problem)
+            if res:
+                return True
+            else:
+                path.pop()
+    return False
+
+
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
