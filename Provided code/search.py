@@ -113,7 +113,7 @@ def breadthFirstSearch(problem):
         if problem.isGoalState(node):
             return path
         for child in problem.getSuccessors(node):
-            if child[0] not in closed.list:
+            if child[0] not in closed.list and child[0] not in [item[0] for item in fringe.list]:
                 fringe.push((child[0], path + [child[1]]))
 
 def uniformCostSearch(problem):
