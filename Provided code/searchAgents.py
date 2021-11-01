@@ -539,7 +539,7 @@ class ClosestDotSearchAgent(SearchAgent):
         while True:
             node, path = fringe.pop()
             closed.push(node)
-            if node in food:
+            if node in food.asList():
                 return path
             for child in problem.getSuccessors(node):
                 if child not in walls:
