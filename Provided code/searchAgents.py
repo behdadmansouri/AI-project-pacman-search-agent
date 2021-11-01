@@ -494,29 +494,15 @@ def foodHeuristic(state, problem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
-    cur_position, foodGrid = state
-    h = 0
-    foodLeft = []
-    for i in range(foodGrid.width):
-        for j in range(foodGrid.height):
-            if foodGrid.data[i - 1][j - 1]:
-                foodLeft.append((i, j))
+    foodLen = len(state[1].asList())
+    min_dis = 0
+    problem.heuristicInfo['state'] = problem.startingGameState
 
-    cur_position = state[0]
-    while len(foodLeft) != 0:
-        food = foodLeft[0]
-        distance = util.manhattanDistance(cur_position, food)
-        # find the closest corner
-        for one in foodLeft:
-            if util.manhattanDistance(cur_position, one) < distance:
-                distance = util.manhattanDistance(cur_position, one)
-                food = one
-        h = h + distance
-        # prepare for the next phase
-        cur_position = food
-        foodLeft.remove(food)
-    return h
-
+    for i in range(foodLen):
+        dis = mazeDistance(state[0], state[1].asList()[i], problem.heuristicInfo['state'])
+        if dis > min_dis:
+            min_dis = dis
+    return min_dis
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -547,9 +533,18 @@ class ClosestDotSearchAgent(SearchAgent):
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
+        closed = util.Stack()
+        fringe = util.Queue()
+        fringe.push((startPosition, []))
+        while True:
+            node, path = fringe.pop()
+            closed.push(node)
+            if node in food:
+                return path
+            for child in problem.getSuccessors(node):
+                if child not in walls:
+                    if child[0] not in closed.list and child[0] not in [item[0] for item in fringe.list]:
+                        fringe.push((child[0], path + [child[1]]))
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
