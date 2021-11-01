@@ -376,7 +376,6 @@ def cornersHeuristic(state, problem):
     walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
 
     h = 0
-    F = 0
     cornersLeft = []
     for i in range(4):
         if corners[i] not in state[1]:
@@ -391,12 +390,12 @@ def cornersHeuristic(state, problem):
             if util.manhattanDistance(cur_position, one) < distance:
                 distance = util.manhattanDistance(cur_position, one)
                 corner = one
-        F = h + distance
+        h = h + distance
         # prepare for the next phase
         cur_position = corner
         cornersLeft.remove(corner)
 
-    return F
+    return h
 
 
 class AStarCornersAgent(SearchAgent):
@@ -495,9 +494,28 @@ def foodHeuristic(state, problem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
-    position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    cur_position, foodGrid = state
+    h = 0
+    foodLeft = []
+    for i in range(foodGrid.width):
+        for j in range(foodGrid.height):
+            if foodGrid.data[i - 1][j - 1]:
+                foodLeft.append((i, j))
+
+    cur_position = state[0]
+    while len(foodLeft) != 0:
+        food = foodLeft[0]
+        distance = util.manhattanDistance(cur_position, food)
+        # find the closest corner
+        for one in foodLeft:
+            if util.manhattanDistance(cur_position, one) < distance:
+                distance = util.manhattanDistance(cur_position, one)
+                food = one
+        h = h + distance
+        # prepare for the next phase
+        cur_position = food
+        foodLeft.remove(food)
+    return h
 
 
 class ClosestDotSearchAgent(SearchAgent):
